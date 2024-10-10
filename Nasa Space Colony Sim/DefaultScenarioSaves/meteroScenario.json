@@ -1,0 +1,38 @@
+{
+  "formatting":{
+    "fileName":"Game 1", 
+    "dateCreated":"10/7/2024"
+  },
+
+  "saveFile":{
+    "economicDifficulty": 3,
+    "popularityDifficulty": 3,
+    "scenario": "Countdown Til D-Day",
+    "resources":{
+      "currency":0,
+
+      "rocketParts":{
+        "rocketFrameLvl1": 0,
+          "frameRods":0,
+          "frameBolts":0,
+
+        "oilRocketEngineLvl1":0,
+          "oilRocketFuel":0,
+
+        "electricRocketEngineLvl1":0,
+         "nuclearRocketFuel":0,
+         "solarRocketPanels":0,
+
+        "onboardBinaryComputers":0,
+        "onboardQuantumComputers":0
+      }
+    },
+
+    "workers":{
+      "interns":50,
+      "engineer":15,
+      "coorprate":15,
+      "astronaut":0
+    }
+  }
+}

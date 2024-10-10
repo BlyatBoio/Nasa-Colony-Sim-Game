@@ -1,0 +1,14 @@
+{
+  "formatting":{
+    "fileName":"Game 1", 
+    "dateCreated":"10/7/2024"
+  },
+  "saveFile":{
+    "economicDifficulty": 1,
+    "popularityDifficulty": 1,
+    "scenario": "Countdown Til D-Day",
+    "resources":{
+      "currency":0
+    }
+  }
+}

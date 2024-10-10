@@ -1,0 +1,19 @@
+{
+  "rocketParts":{
+    "rocketFrameLvl1": {"name": "Rocket Frames lvl 1", "wieght": 10.5, "sellValue": 25000},
+      "frameRods": {"name": "Frame Rod", "wieght": 0.008, "sellValue": 50},
+      "frameBolts": {"name": "Frame Bolt", "wieght": 0.0001, "sellValue": 5},
+
+    "oilRocketEngineLvl1": {"name": "Oil Rocket Engine lvl 1", "weight": 6.5, "sellValue": 60000},
+    "electricRocketEngineLvl1": {"name": "Electric Rocket Engine lvl 1", "weight": 5.5, "sellValue": 80000},
+
+    "fuel":{
+      "oilRocketFuel": {"name": "Oil-Based Rocket Fuel", "weight": 0.075, "sellValue": 10000, "energyValue": 230},
+      "nuclearRocketFuel": {"name": "Nuclear-Based Rocket Fuel", "weight": 0.001, "sellValue": 15000, "energyValue": 170},
+      "solarRocketPanels": {"name": "Solar Panel", "weight": 0.02, "sellValue": 1200, "energyValue": 15}
+    },
+    
+    "onboardBinaryComputers": {"name": "On-Board Binary Computer", "weight": 0.05, "sellValue": 5000, "energyRequirement": 1000},
+    "onboardQuantumComputers": {"name": "On-Board Quantum Computer", "weight": 0.08, "sellValue": 56000, "energyRequirement": 15000}
+  }
+}
