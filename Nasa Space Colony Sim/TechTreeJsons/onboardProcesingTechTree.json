@@ -1,29 +1,27 @@
 {
   "techTree":{
     "name1":"On-Board Procesing",
-    "paths": {
-      "techTreePath": {
-        "names":[
-          "Binary Counters",
-          "Binary Power Reduction",
-          "Enhanced Procesing Power",
-          "Quantum Computing",
-          "More Q-Bits",
-          "Processing 2",
-          "AI Procesing"
+    "paths": [
+      [ 
+        [
+        "Binary Counters",
+        "Binary Power Reduction",
+        "Enhanced Procesing Power",
+        "Quantum Computing",
+        "More Q-Bits",
+        "Processing 2",
+        "AI Procesing"
         ], 
-        "costs":[
+        [
           [[15, "Binary Switch"]],
           [[12, "Battery"]],
           [[15, "Binary Counter"], [12, "Binary Power Augmenter"]],
           [[20, "Enhanced Binary Procesor"], [15, "Quantum Byte"]],
           [[30, "Q-Bit"], [1, "Quantum Computer"]], 
-          [[15, "Quantum Computer"], [30, "Binary Counters"]]
+          [[15, "Quantum Computer"], [30, "Binary Counter"]],
+          [[12, "IDK"]]
         ]
-      }
-    }
-  },
-  "testRefference":{
-    "test1": 0
+      ]
+    ]
   }
 }

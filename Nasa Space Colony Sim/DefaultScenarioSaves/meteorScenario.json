@@ -29,10 +29,10 @@
     },
 
     "workers":{
-      "interns":10,
-      "engineers":20,
-      "managers":5,
-      "astronauts":0
+      "interns":50,
+      "engineer":15,
+      "coorprate":15,
+      "astronaut":0
     }
   }
 }
