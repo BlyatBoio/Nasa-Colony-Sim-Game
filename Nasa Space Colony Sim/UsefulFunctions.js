@@ -1,3 +1,4 @@
+
 function collc(x, y, w, h, x2, y2, w2, h2, bx, by)
 {
   // apply the bezzle to the xs

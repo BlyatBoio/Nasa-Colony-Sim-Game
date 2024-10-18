@@ -9,6 +9,7 @@ let menuMusic2;
 let buttonSound1;
 let buttonImage1;
 let gameFont;
+let logoImage;
 let doMusic = false;
 
 // variables for buttons
@@ -46,6 +47,7 @@ function preload()
   buttonSound1 = loadSound("Audio/confirm_style_2_001.wav");
   gameFont = loadFont("images/Teqto-Demo.otf");
   buttonImage1 = loadImage("images/untitled.png");
+  logoImage = loadImage("images/untitled (3).png");
   buttonHighlight = createImage(100, 100);
 
   saveFile1 = loadJSON("SaveFiles/saveFile1.json");
@@ -60,8 +62,8 @@ function setup()
   // define a tile size for the floor grid
   tileSize = 100;
   // make resolution more acceptable for tiling
-  let canvasWidth = (round(windowWidth / tileSize) * tileSize);
-  let canvasHeight = (round(windowHeight / tileSize) * tileSize);
+  let canvasWidth = (floor(windowWidth / tileSize) * tileSize);
+  let canvasHeight = (floor(windowHeight / tileSize) * tileSize);
 
   // create the array holding the tile classes
   gameTiles = new2dArray(mapWidth, mapHeight);
@@ -73,6 +75,7 @@ function setup()
   console.log(gameTiles);
 
   createCanvas(canvasWidth, canvasHeight);
+  logoImage.loadPixels();
 
   // define buttons
   settingsButton = newButton(width - 250, 350, 200, 50, "Settings", "", true);
@@ -124,7 +127,7 @@ function drawDebug()
   textSize(30);
   text(round(frameRate()), width - 100, 50);
   text(round(mouseX) + ", " + round(mouseY), mouseX, mouseY);
-  text(round(cameraX) + ", " + round(cameraY), 100, 100);
+  text("Camera Pos: " + -round(cameraX) + ", " + -round(cameraY) + ", " + cameraScale, 100, 100);
 }
 
 function updateGame()

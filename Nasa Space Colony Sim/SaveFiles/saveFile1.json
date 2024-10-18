@@ -1,3 +1,4 @@
+
 {
   "formatting":{
     "fileName":"Game 1", 
@@ -27,7 +28,6 @@
         "onboardQuantumComputers":0
       }
     },
-
     "workers":{
       "interns":10,
       "engineers":20,

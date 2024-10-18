@@ -58,7 +58,7 @@ class Employee
 	drawSelf()
 	{
 		this.isDisplayingProfile = false;
-		fill(0);
+		fill(100);
 		stroke(0);
 		rect(this.x, this.y, 15, 40);
 		if (collc(mouseX, mouseY, 10, 10, this.x, this.y, 15, 40, 15, 15) == true) { noFill(); stroke(255); rect(this.x, this.y, 15, 40); this.isDisplayingProfile = true; }
