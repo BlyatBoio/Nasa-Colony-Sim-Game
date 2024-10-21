@@ -115,7 +115,7 @@ function menuBackground(){
 }
 
 function drawGameUI(){
- background(0);
+ dayNightHandler();
  drawFloor();
 
  // bottom right UI

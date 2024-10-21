@@ -9,6 +9,7 @@
     "economicDifficulty": 3,
     "popularityDifficulty": 3,
     "scenario": "Countdown Til D-Day",
+    "timeInGame": 0,
     "resources":{
       "currency":0,
 

@@ -1,4 +1,5 @@
-let debugModeOn = true;
+let debugModeOn = false;
+let mouseScrolled = 0;
 let gameState = "In Menu";
 // In Menu, In Settings, In Keybinds, In Loading Screen, In New Game Menu, In Game, Paused Game
 
@@ -39,6 +40,13 @@ let employeeID = 0;
 let allEmployees = [];
 let employee1;
 
+// in game time vars
+let totalTime = 0;
+let dayTimer = 0;
+let dayLength = 100;
+let isDayTime = true;
+// x time for day is reppeated as the night time timer as well
+
 function preload()
 {
   bgVideo = createVideo("images/AdobeStock_335419604_Video_HD_Preview.mov");
@@ -72,10 +80,8 @@ function setup()
       gameTiles[i][i2] = new gameTile(i * tileSize, i2 * tileSize, "Floor");
     }
   }
-  console.log(gameTiles);
 
   createCanvas(canvasWidth, canvasHeight);
-  logoImage.loadPixels();
 
   // define buttons
   settingsButton = newButton(width - 250, 350, 200, 50, "Settings", "", true);
@@ -118,6 +124,7 @@ function draw()
   // debug modes and reseting the goneBack variable for buttons
   if (debugModeOn == true) drawDebug();
   if (mouseIsPressed == false && keyIsDown(27) == false) goneBack = false;
+  mouseScrolled = 0;
 }
 
 function drawDebug()

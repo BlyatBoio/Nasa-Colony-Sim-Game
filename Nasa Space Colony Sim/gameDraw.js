@@ -1,5 +1,6 @@
 let tileSize;
 let gameTiles;
+let tileID = 0;
 let mapWidth = 100;
 let mapHeight = 100;
 
@@ -18,6 +19,10 @@ class gameTile{
 		this.w = tileSize;
 		this.h = tileSize;
 
+		// ID
+		this.id = tileID;
+		tileID ++;
+
 		this.type = type;
 		// floor, building
 
@@ -25,6 +30,12 @@ class gameTile{
 		// same for y position
 		this.gridX = round(map(this.x, 0, tileSize * mapWidth, 0, mapWidth));
 		this.gridY = round(map(this.y, 0, tileSize * mapHeight, 0, mapHeight));
+
+		// color to fill in the square when drawn
+		let noise1 = noise(x, y);
+		noiseDetail(10)
+		this.baseFillColor = [random(10, 40) * noise1, random(100, 130) * noise1, random(10, 40) * noise1];
+		this.fillColor = this.baseFillColor;
 	}
 	changeType(newType){
 		this.type = newType;
@@ -35,33 +46,37 @@ class gameTile{
 	}
 	drawSelf(){
 		// temp
-		fill(0);
-		stroke(255);
-		rect(this.x, this.y, this.w, this.h);
+		fill(this.fillColor);
+		noStroke();
+		let pos = adjustForCamera(this.x, this.y);
+		rect(pos[0], pos[1], this.w * cameraScale, this.h * cameraScale);
 	}
 }
 
 function cameraControls(){
 	// up/down/left/right movement
-	let movingX = false;
-	let movingY = false;
+	let movingX = 0;
+	let movingY = 0;
 
-	if(keyIsDown(87)) {cameraY += cameraMoveSped; movingY = true;} else
-	if(keyIsDown(83)) {cameraY -= cameraMoveSped; movingY = true;} 
-	if(keyIsDown(68)) {cameraX -= cameraMoveSped; movingX = true;} else 
-	if(keyIsDown(65)) {cameraX += cameraMoveSped; movingX = true;}
+	if(keyIsDown(87)) {cameraY += cameraMoveSped; movingY = 1;} else
+	if(keyIsDown(83)) {cameraY -= cameraMoveSped; movingY = -1;} 
+	if(keyIsDown(68)) {cameraX -= cameraMoveSped; movingX = -1;} else 
+	if(keyIsDown(65)) {cameraX += cameraMoveSped; movingX = 1;}
 
-	if(keyIsDown(82)) {cameraMoveSped = 18};
+	if(keyIsDown(82)) cameraMoveSped = 28;
+	else cameraMoveSped = 12;
 
 	// moving diagonal moves at the same overall speed, not double the speed as it would be otherwise
-	if(movingX == true && movingY == true) {cameraX -= cameraMoveSped/2; cameraY -= cameraMoveSped/2}
-
+	if(movingX != false && movingY != false){ cameraX -= cameraMoveSped*0.25 * movingX; cameraY -= cameraMoveSped*0.25 * movingY}
 	// / cameraScale makes the relative speed the same as it gets larger and smaller
 	if(keyIsDown(38)) cameraScale += round(10 * (0.5*cameraScale)) / 100; else
 	if(keyIsDown(40)) cameraScale -= round(10 * (0.5*cameraScale)) / 100;
 
-	// constrain the cameraScale to a reasonale amount
-	cameraScale = constrain(cameraScale, 1, 5);
+	// mouse scrolling for scale
+	cameraScale -= mouseScrolled / 300;
+
+	// constrain the cameraScale to a reasonable amount
+	cameraScale = constrain(cameraScale, 0.1, 5);
 	cameraScale = round(cameraScale * 100) / 100;
 }
 
@@ -91,17 +106,44 @@ function tDist(x, x2){
 function drawFloor(){
 	cameraControls();
 	// temp draw function to get camera controls working
-	push();
+	/*
+	// initial positions
 	let xpos = 0;
 	let ypos = 0;
-	for(let i = 0; i < 300; i++){
+	// itterate over a given amount
+	for(let i = 0; i < 1000; i++){
+		// define an adjusted position for the blocks in relation to the camera
 		let pos = adjustForCamera(xpos, ypos);
-		fill(230);
-		square(pos[0], pos[1], (tileSize * cameraScale));
-		xpos += tileSize;
-		if(pos[0] < 0){ xpos++;}
+		// if it is not to the left of the screen
+		if(pos[1] < -tileSize * cameraScale){xpos = 0; ypos += tileSize}
+		else
+		if(pos[0] < -tileSize * cameraScale){xpos+= tileSize;} else{
+			// draw a square at that point
+			square(pos[0], pos[1], (tileSize * cameraScale));
+			// incriment the xposition
+			xpos += tileSize;
+		}
+		// other constraints to ensure only on-screen blocks are drawn
 		if(pos[0] >= width) {xpos = 0; ypos += tileSize;}
 		if(pos[1] >= height) break;
 	}
-	pop();
+	*/
+	background(0);
+	for(let x = 0; x < gameTiles.length; x++){
+		for(let y = 0; y < gameTiles[x].length; y++){
+			gameTiles[x][y].drawSelf();
+		}
+	}
+}
+
+function mouseWheel(event){
+	mouseScrolled = event.delta;
+}
+
+function dayNightHandler(){
+	// timer updates
+	totalTime++;
+	dayTimer++;
+
+	if(dayTimer > dayLength)isDayTime = !isDayTime;
 }
