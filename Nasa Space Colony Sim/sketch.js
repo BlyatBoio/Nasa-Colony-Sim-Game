@@ -1,7 +1,7 @@
 let debugModeOn = false;
 let mouseScrolled = 0;
 let gameState = "In Menu";
-// In Menu, In Settings, In Keybinds, In Loading Screen, In New Game Menu, In Game, Paused Game
+// In Menu, In Settings, In Keybinds, Loading Game, In New Game Menu, In Game, Paused Game
 
 // variables for multi-media
 let bgVideo;
@@ -73,14 +73,6 @@ function setup()
   let canvasWidth = (floor(windowWidth / tileSize) * tileSize);
   let canvasHeight = (floor(windowHeight / tileSize) * tileSize);
 
-  // create the array holding the tile classes
-  gameTiles = new2dArray(mapWidth, mapHeight);
-  for(let i = 0; i < gameTiles.length; i++){
-    for(let i2 = 0; i2 < gameTiles[i].length; i2++){
-      gameTiles[i][i2] = new gameTile(i * tileSize, i2 * tileSize, "Floor");
-    }
-  }
-
   createCanvas(canvasWidth, canvasHeight);
 
   // define buttons
@@ -120,6 +112,7 @@ function draw()
     case "In New Game Menu": drawNewGameUI(); break;
     case "In Game": drawGameUI(); break;
     case "Paused Game": drawGameUI(); break;
+    case "Loading Game": createGameFloor(); break;
   }
   // debug modes and reseting the goneBack variable for buttons
   if (debugModeOn == true) drawDebug();

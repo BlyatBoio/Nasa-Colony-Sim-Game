@@ -85,7 +85,9 @@ function drawNewGameUI(){
 }	
 
 function loadSaveFile(file1){
- curLoadedGame = file1; 
+  curLoadedGame = file1; 
+  totalTilesCreated = 0;
+  gameTiles = new2dArray(mapWidth, mapHeight);
 
  // load the employees array
  allEmployees = [];
@@ -102,7 +104,7 @@ function loadSaveFile(file1){
    allEmployees.push(new Employee("Astronaut"));
  }
 
- gameState = "In Game"; 
+ gameState = "Loading Game"; 
  bgVideo.stop();
 }
 
@@ -139,9 +141,9 @@ function drawGameUI(){
  
  // in game updates
  if(gameState == "In Game"){
-   updateGame();
+   //updateGame();
    for(let i = 0; i < allEmployees.length; i++){
-     if(allEmployees[i].isDisplayingProfile == true) { allEmployees[i].displayProfile(); break;}
+     //if(allEmployees[i].isDisplayingProfile == true) { allEmployees[i].displayProfile(); break;}
    }
    if(goneBack == false && keyIsDown(27)) {gameState = "Paused Game"; goneBack = true;}
  }

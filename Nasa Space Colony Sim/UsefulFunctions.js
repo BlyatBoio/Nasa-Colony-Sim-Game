@@ -78,7 +78,6 @@ function blackAndWhiteFilter(image1)
 
 function statisticBar(x, y, s, maxW, text1, percentFull)
 {
-  percentFull += 100;
   percentFull = constrain(percentFull, 0, 100);
 
   // draw the line
