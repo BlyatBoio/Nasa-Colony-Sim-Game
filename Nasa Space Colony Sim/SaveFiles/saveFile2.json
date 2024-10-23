@@ -1,10 +1,7 @@
 {
   "formatting":{
-    "fileName":"Game 2", 
-    "dateCreated":"10/7/2024"
+    "fileName":"Save Slot 2", 
+    "dateCreated":""
   },
-  "saveFile":{
-    "lives": 10,
-    "RandomVar": "RandomVar"
-  }
+  "Loadable": 0
 }

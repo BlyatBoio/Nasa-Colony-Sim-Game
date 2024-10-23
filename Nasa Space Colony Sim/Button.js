@@ -1,4 +1,6 @@
 let buttonHighlight;
+let menus = [];
+let menuID = 0;
 
 function newButton(x, y, w, h, text, subtext, doHighlight, bgImage)
 {
@@ -8,7 +10,7 @@ let b1 = new buttonUI(x, y, w, h, text, subtext, doHighlight, bgImage);
 
 class buttonUI
 {
-  constructor(x, y, w, h, text, subtext, doHighlight, bgImage, doDraw)
+  constructor(x, y, w, h, text, subtext, doHighlight, bgImage, doDraw, callBackFunction)
   {
 		// position and size
 		this.x = x;
@@ -26,8 +28,10 @@ class buttonUI
 		this.bgImage = bgImage;
 		this.doBgImage = true;
 		this.doDraw = doDraw;
+		// drawing variables
 		if(this.doDraw == undefined) this.doDraw = true;
 		if (this.bgImage == undefined) this.doBgImage = false;
+		this.callBackFunction = callBackFunction;
 	}
   drawSelf()
   {
@@ -66,6 +70,8 @@ class buttonUI
 				strokeWeight(1);
 			}
 		}
+		// if a call-back function is provided, run said function when pressed
+		if(this.isPressed() && this.callBackFunction != undefined) this.runCallBackFunction();
 	}
 	isPressed()
 	{
@@ -98,6 +104,10 @@ class buttonUI
 
 		// draw the image
 		image(buttonHighlight, this.x, this.y, this.w, this.h);
+	}
+	runCallBackFunction(){
+		let f1 = eval(this.callBackFunction);
+		f1();
 	}
 }
 
