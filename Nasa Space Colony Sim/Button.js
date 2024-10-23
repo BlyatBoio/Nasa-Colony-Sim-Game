@@ -57,7 +57,8 @@ class buttonUI
 					// draw subtext
 					textSize(15);
 					fill(230);
-					text(this.subtext, this.x + this.w - 40, this.y - 10);
+					textAlign(CENTER);
+					text(this.subtext, this.x, this.y - 10);
 				}
 			}
 

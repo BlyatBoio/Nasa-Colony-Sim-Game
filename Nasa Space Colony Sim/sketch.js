@@ -28,6 +28,7 @@ let newGameEDiffSlider;
 let newGamePDiffSlider;
 let newGameScenarioButton;
 let newGameWorldSizeSlider;
+let debugModeButton;
 
 // tech tree variables
 var onBoardProcessnigTree;
@@ -96,6 +97,7 @@ function setup()
   resumeGameButton = newButton(width / 2 - 100, height/2 - 150, 200, 50, "Resume Game", "", true);
   mainMenuButton = newButton(width / 2 - 100, height/2 - 80, 200, 50, "Main Menu", "", true);
   createGameButton = newButton(width / 2 - 100, 525, 200, 50, "Create Game", "", true);
+  debugModeButton = newButton(width / 2 - 100, height/2, 200, 50, "Debug Mode", "", true);
   backButton = newButton(50, 50, 40, 40, "⟲", "", true);
 
   newGameEDiffSlider = createSlider(1, 5, 3, 1);
