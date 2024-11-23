@@ -1,8 +1,8 @@
 let tileSize;
 let gameTiles;
 let tileID = 0;
-let mapWidth = 200;
-let mapHeight = 200;
+let mapWidth = 50;
+let mapHeight = 50;
 
 // vars for the "Camera" position and movement
 // because of how the cameraX and Y interact with screen objects
@@ -15,8 +15,11 @@ let cameraMoveSped = 12;
 let floorLoadingX = 0;
 let floorLoadingY = 0;
 let totalTilesCreated = 0;
+let firstYOnScreen = 100000;
 let lastYOnScreen = 0;
 let logoRotation = 0;
+let firstXOnScreen = 100000;
+let lastXOnScreen = -1;
 
 class gameTile{
 	constructor(x, y, type){
@@ -55,13 +58,16 @@ class gameTile{
 		// temp
 		fill(this.fillColor);
 		noStroke();
-		let pos = adjustForCamera(this.x, this.y);
+		let pos = adjustForCamera(this.x + this.w/2, this.y + this.h/2);
 		square(pos[0], pos[1], this.w * cameraScale + 1);
 		if (pos[0] > width) return 1;
 		if (pos[1] > height) return 2;
 		if (pos[0] < -tileSize * cameraScale) return 3;
 		if (yOnScreenSet == false && pos[1] > 50) { yOnScreenSet = true; return 4 }
 		return 0;	
+	}
+	resetColor(){
+		this.fillColor = this.baseFillColor;
 	}
 }
 
@@ -144,9 +150,9 @@ function adjustForCamera(x, y){
 	// tDist gets the "true distance" or simply includes negative signs
 	// if X is greater than X2
 	let c1 = cameraScale-1;
-	let t2 = tileSize/2
-	x += (c1*tileSize*(tDist(x+t2,width/2)/tileSize));
-	y += (c1*tileSize*(tDist(y+t2,height/2)/tileSize));
+
+	x += (c1*(tDist(x,width/2)));
+	y += (c1*(tDist(y,height/2)));
 
 	// return the position
 	return [x, y];
@@ -161,9 +167,11 @@ function tDist(x, x2){
 function drawFloor(){
   background(0);
 	cameraControls();
+	bs1.drawHighlight();
 	// lastYOnScreen vars help to ensure its not drawing excess squares outside of view
 	let endLoop = false;
 	yOnScreenSet = false;
+	lastXOnScreen = 0
 	for (let x = 0; x < gameTiles.length; x++)
 	{
 		endLoop = false;
@@ -175,9 +183,13 @@ function drawFloor(){
 			if (check1 != 0)
 			{
 				if (check1 == 3) { break; }
-				if (check1 == 1) { endLoop = true; break; }
+				if (check1 == 1) { endLoop = true; lastXOnScreen = x; break;}
 				if (check1 == 2) break;
 				if (check1 == 4) { lastYOnScreen = y; }
+			} else {
+				if(gameTiles[x][y].x < firstXOnScreen) firstXOnScreen = gameTiles[x][y].x;
+				if(gameTiles[x][y].y < firstYOnScreen) firstYOnScreen = gameTiles[x][y].y;
+				if(gameTiles[x][y].x > lastXOnScreen) lastXOnScreen = gameTiles[x][y].x;
 			}
 		}
 		if (endLoop == true) break;

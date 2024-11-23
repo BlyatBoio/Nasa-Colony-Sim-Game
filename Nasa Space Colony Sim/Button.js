@@ -2,15 +2,15 @@ let buttonHighlight;
 let menus = [];
 let menuID = 0;
 
-function newButton(x, y, w, h, text, subtext, doHighlight, bgImage)
+function newButton(x, y, w, h, text, subtext, doHighlight, bgImage, doDraw, doAnimation, animation)
 {
-let b1 = new buttonUI(x, y, w, h, text, subtext, doHighlight, bgImage);
+let b1 = new buttonUI(x, y, w, h, text, subtext, doHighlight, bgImage, doDraw, doAnimation, animation);
   return b1;
 }
 
 class buttonUI
 {
-  constructor(x, y, w, h, text, subtext, doHighlight, bgImage, doDraw, callBackFunction)
+  constructor(x, y, w, h, text, subtext, doHighlight, bgImage, doDraw, doAnimation, animation)
   {
 		// position and size
 		this.x = x;
@@ -31,7 +31,12 @@ class buttonUI
 		// drawing variables
 		if(this.doDraw == undefined) this.doDraw = true;
 		if (this.bgImage == undefined) this.doBgImage = false;
-		this.callBackFunction = callBackFunction;
+
+		this.doAnimation = doAnimation;
+		this.animation = animation;
+		if(this.doAnimation == undefined) this.doAnimation = false;
+		if (this.animation == undefined) this.doAnimation = false;
+		this.animTime = 0;
 	}
   drawSelf()
   {
@@ -39,28 +44,35 @@ class buttonUI
 		if(this.doDraw == true){
 			noStroke();
 			fill(50, 50, 200, 100);
-			if (this.doBgImage == true) image(this.bgImage, this.x, this.y);
-			else rect(this.x, this.y, this.w, this.h);
+			if(this.doAnimation == false){
+				if (this.doBgImage == true) image(this.bgImage, this.x, this.y, this.w, this.h);
+				else rect(this.x, this.y, this.w, this.h);
+			} 
+			else image(this.animation[0][0], this.x, this.y, this.w, this.h);
 
 			// draw the text and subtext
 			textAlign(CENTER);
 			textSize(25);
 			dropShadowText(this.text, this.x + this.w / 2, this.y + this.h / 2 + 7, 3, 5);
 
-			if (collc(this.x, this.y, this.w, this.h, mouseX, mouseY, 1, 1, 150, 159) == true);
+			if (collc(this.x, this.y, this.w, this.h, mouseX, mouseY, 1, 1, 150, 150) == true);
 			{
 				// do highlighting for when mouse gets close
 				if(this.doHighlight == true) this.drawHighlight();
 
+
 				if (collc(this.x, this.y, this.w, this.h, mouseX, mouseY, 1, 1))
 				{
+					// animation
+					this.animTime++;
+					if(this.doAnimation == true) image(animate(this.animation[0], this.animation[1], this.animation[2], this.animTime), this.x, this.y, this.w, this.h);
 					// draw subtext
 					textSize(15);
 					fill(230);
-					textAlign(CENTER);
-					text(this.subtext, this.x, this.y - 10);
+					text(this.subtext, this.x + this.w - 40, this.y - 10);
 				}
-			}
+			} 
+			if(collc(this.x, this.y, this.w, this.h, mouseX, mouseY, 1, 1, 150, 159) == false) this.animTime = 0;
 
 			if (this.isPressed())
 			{
@@ -72,7 +84,6 @@ class buttonUI
 			}
 		}
 		// if a call-back function is provided, run said function when pressed
-		if(this.isPressed() && this.callBackFunction != undefined) this.runCallBackFunction();
 	}
 	isPressed()
 	{
@@ -105,10 +116,6 @@ class buttonUI
 
 		// draw the image
 		image(buttonHighlight, this.x, this.y, this.w, this.h);
-	}
-	runCallBackFunction(){
-		let f1 = eval(this.callBackFunction);
-		f1();
 	}
 }
 

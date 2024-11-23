@@ -13,8 +13,9 @@ let buttonImage1;
 let gameFont;
 let logoImage;
 let doMusic = false;
+let workerImage;
 
-// variables for buttons
+// variables for buttons and interactive objects
 let goneBack = false;
 let settingsButton;
 let playGameButton;
@@ -28,7 +29,8 @@ let newGameEDiffSlider;
 let newGamePDiffSlider;
 let newGameScenarioButton;
 let newGameWorldSizeSlider;
-let debugModeButton;
+let buildMenuButton;
+let debugButton;
 
 // tech tree variables
 var onBoardProcessnigTree;
@@ -58,9 +60,23 @@ let isDayTime = true;
 
 let scenarios = ["Coundown Clock", "Last Chance For Change"];
 let curDisplayingScenario = 0;
+let animTime = 0;
+
+let bs1;
+
+// inventory vars
+let inventoryWidth = 9;
+let inv1;
+let lootTable1;
+let consoleText = "";
+let inWorldMouseX = 0;
+let inWorldMouseY = 0;
+let consoleLength = 0;
+let consoleDrawY = 50;
 
 function preload()
 {
+  // preload multi-media
   bgVideo = createVideo("images/AdobeStock_335419604_Video_HD_Preview.mov");
   menuMusic1 = loadSound("Audio/storymatic.ogg");
   menuMusic2 = loadSound("Audio/theClub.ogg");
@@ -68,8 +84,10 @@ function preload()
   gameFont = loadFont("images/Teqto-Demo.otf");
   buttonImage1 = loadImage("images/untitled.png");
   logoImage = loadImage("images/untitled (3).png");
+  workerImage = loadImage("images/Worker Variant 1.png");
   buttonHighlight = createImage(100, 100);
 
+  // pre-load json objects
   saveFile1 = loadJSON("SaveFiles/saveFile1.json");
   saveFile2 = loadJSON("SaveFiles/saveFile2.json");
   saveFile3 = loadJSON("SaveFiles/saveFile3.json");
@@ -77,6 +95,7 @@ function preload()
   defaultJson = loadJSON("defaultGameSave.json");
 
   onBoardProcessnigTree = loadJSON("TechTreeJsons/onboardProcesingTechTree.json");
+  defineItems();
 }
 
 function setup()
@@ -93,11 +112,12 @@ function setup()
   settingsButton = newButton(width - 250, 350, 200, 50, "Settings", "", true);
   playGameButton = newButton(width - 250, 200, 200, 50, "Play Game", "", true);
   keyBindsButton = newButton(width / 2 - 100, height / 2 - 100, 200, 50, "Keybinds", "", true);
+  debugButton = newButton(width / 2 - 100, height / 2, 200, 50, "Debug Mode", "", true);
   newGameButton = newButton(width / 2 - 115, 100, 230, 50, "Create Game", "", true);
   resumeGameButton = newButton(width / 2 - 100, height/2 - 150, 200, 50, "Resume Game", "", true);
   mainMenuButton = newButton(width / 2 - 100, height/2 - 80, 200, 50, "Main Menu", "", true);
   createGameButton = newButton(width / 2 - 100, 525, 200, 50, "Create Game", "", true);
-  debugModeButton = newButton(width / 2 - 100, height/2, 200, 50, "Debug Mode", "", true);
+  buildMenuButton = newButton(40, height - 140, 100, 100, "🛠️", "Build Menu", false, buttonImage1, true, true, [[buttonImage1, logoImage], 10, false]);
   backButton = newButton(50, 50, 40, 40, "⟲", "", true);
 
   newGameEDiffSlider = createSlider(1, 5, 3, 1);
@@ -141,6 +161,12 @@ function setup()
 
   // onboard processing tech tree
   onBoardProcessnigTree = jsonToTreeClass(onBoardProcessnigTree);
+  //bs1 = new buildingShape([0, 1, 1, 1, 2], [0, -1, -2, -3, 0]); // Penis hehe
+  bs1 = new buildingShape([0, 1, 0, 1], [0, 0, 1, 1])
+  selectedItem = empty;
+
+  // uncoment to instantly load a default world for testing / debug purposes
+  //loadSaveFile(defaultJson);
 }
 
 function draw()
@@ -148,7 +174,9 @@ function draw()
   // formatting
   textFont(gameFont);
   textAlign(CENTER);
-  // game-state engine to determine what is called
+  // game-state engine to determine what function is called
+  // the UI functions also include all of the other calls required to run
+  // the game
   switch (gameState)
   {
     case "In Game": drawGameUI(); break;
@@ -164,6 +192,8 @@ function draw()
   if (debugModeOn == true) drawDebug();
   if (mouseIsPressed == false && keyIsDown(27) == false) goneBack = false;
   mouseScrolled = 0;
+  animTime ++;
+  mouseIsDown = false;
 }
 
 function drawDebug()
@@ -174,7 +204,22 @@ function drawDebug()
   textSize(30);
   text(round(frameRate()), width - 100, 50);
   text(round(mouseX) + ", " + round(mouseY), mouseX, mouseY);
-  text("Camera Pos: " + -round(cameraX) + ", " + -round(cameraY) + ", " + cameraScale, 100, 100);
+  text("Camera Pos: " + -round(cameraX) + ", " + -round(cameraY) + ", " + cameraScale, 10, 110);
+  text("Employees Loaded: " + allEmployees.length, 10, 140);
+  for(let i = 0; i < allEmployees.length; i++){
+  }
+  if(mouseX < 300 && consoleText.length > 0) drawConsole();
+}
+
+function drawConsole(){
+  stroke(0);
+  fill(100, 100, 100, 200);
+  rect(0, 0, 300, height);
+  fill(255);
+  stroke(0);
+  textAlign(LEFT);
+  textSize(12);
+  text(consoleText, 50, consoleDrawY);
 }
 
 function updateGame()

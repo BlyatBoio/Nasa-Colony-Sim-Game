@@ -1,3 +1,6 @@
+let mouseIsDown = false;
+let selectedItem;
+let selectedAmnt = 0;
 
 function collc(x, y, w, h, x2, y2, w2, h2, bx, by)
 {
@@ -36,7 +39,13 @@ function new2dArray(w, h, baseValue){
   var arrayBase = [];
 
   // if a base value is provided, it becomes a 2d array with the scecond layer contianing the base value
-  if(baseValue != undefined) arrayBase.push(baseValue);
+  if(baseValue != undefined) {
+    if(baseValue.length != undefined) {
+      for(let i = 0; i < baseValue.length; i++){
+        arrayBase.push(baseValue[i]);
+      }
+    } else arrayBase.push(baseValue);
+  }
 
   // push the second layer
   for(let x  = 0; x < w; x++){
@@ -106,6 +115,19 @@ function dropShadowText(txt, x, y, xoffset, yoffset)
   text(txt, x + xoffset, y + yoffset);
   fill(230);
   text(txt, x, y);
+}
+
+function animate(frames, timeBetweenFrames, loop, currentTime){
+  let curFrame = round(currentTime / timeBetweenFrames);
+  if(curFrame > frames.length-1){
+    // modulo operator (%) gives the remainder and doing so loops
+    // the current frame between 0-amount of frames
+    if(loop == true) return frames[curFrame%frames.length];
+    // if it is not looping, simply draw the last frame
+    else return frames[frames.length-1];
+  }
+  curFrame = round(constrain(curFrame, 0, frames.length-1));
+  return frames[curFrame];
 }
 
 function jsonToTreeClass(json1)
@@ -193,5 +215,192 @@ class techTreeItem
   {
     // draws a button which when clicked, sets it to upgraded
     button(x, y, 50, 20, this.name, this.costString, true);
+  }
+}
+
+class inventory{
+  constructor(size, lootTable){
+    this.size = size;
+    // define the array
+    this.items = Array(inventoryWidth);
+
+    // make the array 2d
+    for(let i = 0; i < this.items.length; i++){
+      this.items[i] = [];
+    }
+
+    // loot table functions
+    if(lootTable != undefined){
+      for(let i = 0; i < this.items.length; i++){
+        for(let i2 = 0; i2 < ceil(size/inventoryWidth) + 1; i2++){
+          // get a random item from the loot table
+          let r = lootTable.randomItem();
+
+          // push it into the items array with a random value
+          this.items[i].push(r);
+          this.items[i].push(random(0, r.stackSize));
+        }
+      }
+    }
+    // push the default empty items into the array
+    else {
+      for(let i = 0; i < this.items.length; i++){
+        for(let i2 = 0; i2 < ceil(size/inventoryWidth) + 1; i2++){
+
+          // generate a random on/off value
+          let a = round(random(0, 1));
+
+          // push either empty or placeholder depending on the value of a
+          if(a == 0) this.items[i].push([empty, 0]);
+          else this.items[i].push([placeHolder1, round(random(5, 20))]);
+        }
+      }
+    }
+
+    // trim the end to make it actually appropriate to the size
+
+    // for a size of 33 and a width of 9
+    // let a = ceil(33/9) = your height
+    // let b = 33 - a * width
+    let removeAmnt = inventoryWidth - (size - (floor(size/inventoryWidth)*inventoryWidth));
+
+    for(let i = 0; i < removeAmnt; i++){
+      this.items[(this.items.length-i)-1].shift();
+    }
+
+  }
+  drawSelf(screenX, screenY, displaySize){
+    // default the display size
+    if(displaySize == undefined) displaySize = 50;
+
+    for(let x = 0; x < this.items.length-1; x++){
+      for(let y = 0; y < this.items[x].length-1; y++){  
+        // screen display position
+        let curDisplayX = screenX + (x*displaySize);
+        let curDisplayY = screenY + (y*displaySize);
+        
+        // formatting
+        fill(200, 200, 200, 100);
+        stroke(230);
+        square(curDisplayX, curDisplayY, displaySize);
+
+        // only draw the text if the slot is not empty
+        if(this.items[x][y][0].name != "Empty" && this.items[x][y][1] != 0){
+
+          // formatting
+          fill(255);
+          stroke(0);
+          textSize(10);
+          textAlign(CENTER);
+          text(this.items[x][y][0].name + " X " + this.items[x][y][1], curDisplayX + displaySize/2, curDisplayY + displaySize/2 + 20);
+        }
+      }
+    }
+
+    // call the interaction function
+    this.interaction(screenX, screenY, displaySize);
+  }
+  interaction(screenX, screenY, displaySize){
+    // itterate over all positions
+    for(let x = 0; x < this.items.length-1; x++){
+      for(let y = 0; y < this.items[x].length-1; y++){  
+        
+        // simpler refference to current position 
+        let curDisplayX = screenX + (x*displaySize);
+        let curDisplayY = screenY + (y*displaySize);
+
+        // collision with mouse
+        if(collc(curDisplayX, curDisplayY, displaySize, displaySize, mouseX, mouseY, 1, 1) == true){
+          noStroke();
+          fill(200, 200, 200, 100);
+          square(curDisplayX, curDisplayY, displaySize);
+          if(mouseIsDown == true){
+            // if the item being placed into the slot is not the same item as is in the slot
+            if(selectedItem.itemID != this.items[x][y][0].itemID){
+
+              // deine a saved variable of the item
+              let newSelectedItem = this.items[x][y][0];
+              let newSelectedAmnt = this.items[x][y][1];
+
+              // update the items array
+              this.items[x][y][0] = selectedItem;
+              this.items[x][y][1] = selectedAmnt;
+              
+              // update selected item with the coppied variables
+              selectedItem = newSelectedItem;
+              selectedAmnt = newSelectedAmnt;
+            } else {
+              // if the item being placed into the slot is the same item
+
+              // add the amount to the items array
+              this.items[x][y][1] += selectedAmnt;
+
+              // reset the item amount
+              selectedItem = empty;
+              selectedAmnt = 0;
+
+              // check to see if the amount in the slot is greater than the stack size
+              if(this.items[x][y][1] > this.items[x][y][0].stackSize){
+                selectedItem = this.items[x][y][0];
+                selectedAmnt = this.items[x][y][1] - this.items[x][y][0].stackSize;
+                this.items[x][y][1] = this.items[x][y][0].stackSize;
+              }
+            }
+
+          }
+        }
+      }
+    }
+    // draw the curently selected item on the mouse
+    if(selectedItem.name != "Empty" && selectedAmnt != 0){
+
+      // formatting
+      fill(255);
+      stroke(0);
+      textSize(10);
+      textAlign(CENTER);
+      text(selectedItem.name + " X " + selectedAmnt, mouseX, mouseY);
+    }
+  }
+}
+
+class lootTable{
+  constructor(items, chances, maxValue){
+    this.items = items;
+    this.chances = chances;
+    this.maxValue = maxValue;
+
+    // instead of having item1, item2, with 70% 30%, it becomes 70 item1s and 30 item2s,
+    // these are then chosen at random from the array with a random 0-100 
+    let items1 = [];
+    for(let i = 0; i < this.chances.length; i++){
+      for(let i2 = 0; i2 < this.chances[i]; i2++){
+        items1.push(this.items[i]);
+      }
+    }
+    this.items = items1;
+    if(maxValue == undefined) this.maxValue = 100;
+  }
+  randomItem(){
+    // get a random item with the proper weighting as far as the loot table.
+    let r = round(random(0, this.maxValue-1));
+    return this.items[r];
+  }
+}
+
+function mousePressed(){
+  mouseIsDown = true;
+}
+
+function consoleTextLog(t){
+  consoleText += consoleLength + ": ";
+  consoleText += t;
+  consoleText += "\n"
+  consoleLength ++;
+  if(consoleLength + consoleDrawY > height/20) consoleDrawY -= 60; 
+  if(consoleLength > 500) {
+    consoleText = "";
+    consoleLength = 0;
+    consoleDrawY = 50;
   }
 }
